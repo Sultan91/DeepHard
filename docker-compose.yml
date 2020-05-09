@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: db
+    restart: unless-stopped
+    environment:
+      - MYSQL_USER=aiomysql
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_DATABASE=deep_hard
+      - MYSQL_ROOT_PASSWORD=mypass
+      - SERVICE_NAME=mysql
+    ports:
+      - 3306:3306
+      - 33060:33060
+    volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  web:
+    image: web_app:1.0
+    links:
+      - mysql:mysql
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    ports:
+     - "8888:8888" #Outer port : inner container port
